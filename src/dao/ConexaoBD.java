@@ -5,19 +5,35 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexaoBD {
+    private static Connection conexao = null;
 
-    private ConexaoBD(){}
-    private static ConexaoBD instancia;
-
-    public synchronized static ConexaoBD getInstancia(){
-        if(instancia == null){
-            instancia = new ConexaoBD();
-        }
-        return instancia;
+    private ConexaoBD() {
+        // Construtor privado para impedir instâncias
     }
 
-    public Connection getConexao() throws SQLException {
-        String url = "jdbc:sqlite:meu_banco.db";
-        return DriverManager.getConnection(url);
+    public static Connection getConexao() {
+        if (conexao == null) {
+            try {
+                // Configurações de conexão
+                String url = "jdbc:mysql://localhost:3306/sua_base_de_dados";
+                String usuario = "seu_usuario";
+                String senha = "sua_senha";
+
+                conexao = DriverManager.getConnection(url, usuario, senha);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return conexao;
+    }
+
+    public static void fecharConexao() {
+        if (conexao != null) {
+            try {
+                conexao.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
